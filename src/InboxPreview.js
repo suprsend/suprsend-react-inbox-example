@@ -16,6 +16,26 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+function useComponentVisible(initialIsVisible) {
+  const [showNotifications, setShowNotifications] = useState(initialIsVisible);
+  const ref = useRef(null);
+
+  const handleClickOutside = (event) => {
+    if (ref.current && !ref.current.contains(event.target)) {
+      setShowNotifications(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, []);
+
+  return { ref, showNotifications, setShowNotifications };
+}
+
 const renderer = {
   link(href, title, text) {
     return `<a href=${href} title=${title} style="color:#066AF3;text-decoration:none;white-space:normal;">
@@ -60,7 +80,7 @@ dayjs.updateLocale("en", {
 
 function ToastNotification({ data }) {
   return (
-    <div className="bg-white flex items-start">
+    <div className="bg-white flex items-start max-h-14">
       {data?.message?.avatar?.avatar_url ? (
         <img
           src={data?.message?.avatar?.avatar_url}
@@ -78,13 +98,19 @@ function ToastNotification({ data }) {
           className="h-6 w-6 rounded-full"
         />
       )}
-      <p className="text-sm ml-2">{data?.message?.text}</p>
+      <div
+        className="text-sm break-words ml-2"
+        dangerouslySetInnerHTML={{
+          __html: DOMPurify.sanitize(marked(data?.message?.text)),
+        }}
+      />
     </div>
   );
 }
 
 function NotificationItem({ notifications, notification, index, markClicked }) {
   const notificationdetails = notification?.message;
+  const text = notificationdetails?.text;
   const actionOne = notificationdetails?.actions?.[0];
   const actionTwo = notificationdetails?.actions?.[1];
   const hasButtons = actionOne || actionTwo;
@@ -104,12 +130,13 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
           notification?.seen_on
             ? "bg-white hover:bg-gray-50"
             : "bg-[#F4F9FF] hover:bg-[#DFECFF]",
-          notifications?.length !== index + 1 && "border-b border-gray-100"
+          notifications?.length !== index + 1 && "border-b border-gray-100",
+          index === 0 && "rounded-t-xl"
         )}
       >
         <div className="p-4 cursor-pointer flex w-full">
           <div className="inline-flex items-start mr-2 w-[10%]">
-            {notificationdetails?.avatar?.action_url ? (
+            {notificationdetails?.avatar?.avatar_url ? (
               <a
                 href={notificationdetails?.avatar?.action_url}
                 target="_blank"
@@ -143,7 +170,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
               <div
                 className="text-sm break-words text-[#1c1c1c]"
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(marked(notificationdetails?.text)),
+                  __html: DOMPurify.sanitize(marked(text)),
                 }}
               />
             )}
@@ -247,11 +274,11 @@ function NotificationPreview({ notifications, markClicked }) {
   const hasNotifications = notifications?.length > 0;
 
   return (
-    <>
+    <div>
       <div className="w-10 overflow-hidden ml-[35px] bg-white">
         <div className="h-4 w-4 border border-gray-300 rotate-45 transform origin-bottom-left bg-white"></div>
       </div>
-      <div className="rounded-lg shadow border border-gray-200 -mt-[0.8px]">
+      <div className="rounded-xl border border-gray-300 -mt-[0.8px]">
         <div className="max-h-[550px]">
           {!hasNotifications ? (
             <div className="h-[300px] flex justify-center items-center">
@@ -265,8 +292,8 @@ function NotificationPreview({ notifications, markClicked }) {
               markClicked={markClicked}
             />
           )}
-          <div className="py-2 border-t border-gray-200 flex items-center justify-center">
-            <p className="text-sm text-gray-400">Powered By</p>
+          <div className="py-3 border-t border-gray-200 flex items-center justify-center">
+            <p className="text-xs text-gray-400">Powered By</p>
             <img
               src={SuprSendLogo}
               alt="suprsend_logo"
@@ -275,14 +302,15 @@ function NotificationPreview({ notifications, markClicked }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
 function InboxPreview({ showToast }) {
-  const [showNotifications, setShowNotifications] = useState(false);
   const toastRef = useRef(showToast);
 
+  const { ref, showNotifications, setShowNotifications } =
+    useComponentVisible(false);
   const { notifications, markClicked, unSeenCount } = useNotifications();
   const { markAllSeen } = useBell();
 
@@ -307,7 +335,7 @@ function InboxPreview({ showToast }) {
   });
 
   return (
-    <div className="col-span-1 w-9/12 pl-16">
+    <div className="col-span-1 w-9/12 pl-16" ref={ref}>
       <div className="flex">
         <div>
           <div

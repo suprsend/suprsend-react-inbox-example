@@ -2,6 +2,8 @@ import { useState } from "react";
 import suprsend from "@suprsend/web-sdk";
 import { toast, ToastContainer } from "react-toastify";
 import { ReactComponent as CrossIcon } from "./assets/crossIcon.svg";
+import { ReactComponent as QuestionMarkIcon } from "./assets/questionMarkIcon.svg";
+import Tooltip from "./Tooltip";
 import "react-toastify/dist/ReactToastify.css";
 
 const mandatoryFieldMessage = "This field is required";
@@ -191,9 +193,15 @@ function InboxForm({ showToast, setShowToast }) {
       <div className="mb-6">
         <label
           htmlFor="avatar"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="text-sm font-medium text-gray-700 mb-1 flex items-center"
         >
           Avatar
+          <Tooltip
+            content="Left side image to show profile image"
+            direction="top"
+          >
+            <QuestionMarkIcon className="h-4 w-4 ml-1 text-[#6D727E]" />
+          </Tooltip>
         </label>
         <div className="flex w-9/12">
           <div className="w-full">
@@ -231,9 +239,12 @@ function InboxForm({ showToast, setShowToast }) {
       <div className="mb-6">
         <label
           htmlFor="subtext"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="text-sm font-medium text-gray-700 mb-1 flex items-center"
         >
           Subtext
+          <Tooltip content="Shown below body text" direction="top">
+            <QuestionMarkIcon className="h-4 w-4 ml-1 text-[#6D727E]" />
+          </Tooltip>
         </label>
         <div className="flex w-9/12">
           <div className="w-full">
@@ -341,13 +352,21 @@ function InboxForm({ showToast, setShowToast }) {
                     </p>
                   )}
                 </div>
-                <div className="mt-2 ml-2">
+                <div className="mt-2 ml-4">
                   <button
                     type="button"
                     onClick={() => {
                       let newArr = [...actions];
                       newArr[i] = { name: "", url: "" };
                       setActions(newArr);
+
+                      if (
+                        formErrors?.actions?.[i]?.url ||
+                        formErrors?.actions?.[i]?.name
+                      ) {
+                        clonedFormErrors.actions[i] = { name: "", url: "" };
+                        setFormErrors(clonedFormErrors);
+                      }
                     }}
                   >
                     <CrossIcon />

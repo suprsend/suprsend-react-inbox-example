@@ -5,6 +5,7 @@ import { v4 as uuid } from "uuid";
 import { ToastContainer } from "react-toastify";
 import InboxForm from "./InboxForm";
 import InboxPreview from "./InboxPreview";
+import "./App.css";
 
 function createUser() {
   const userID = uuid();
