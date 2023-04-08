@@ -1667,19 +1667,9 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@suprsend/react-headless@/Users/work/suprsend/react-inbox-example/suprsend-react-headless-1.2.0.tgz":
+"@suprsend/react-headless@./suprsend-react-headless-1.2.0.tgz":
   version "1.2.0"
-  uid "0b340a8a36bbafa1d5cad2a747dee9731ec2ce63"
-  resolved "/Users/work/suprsend/react-inbox-example/suprsend-react-headless-1.2.0.tgz#0b340a8a36bbafa1d5cad2a747dee9731ec2ce63"
-  dependencies:
-    "@react-native-async-storage/async-storage" "^1.17.7"
-    crypto-js "^4.1.1"
-    mitt "^3.0.0"
-    zustand "^4.0.0-rc.1"
-
-"@suprsend/react-headless@file:suprsend-react-headless-1.2.0.tgz":
-  version "1.2.0"
-  resolved "file:suprsend-react-headless-1.2.0.tgz#0b340a8a36bbafa1d5cad2a747dee9731ec2ce63"
+  resolved "./suprsend-react-headless-1.2.0.tgz#0b340a8a36bbafa1d5cad2a747dee9731ec2ce63"
   dependencies:
     "@react-native-async-storage/async-storage" "^1.17.7"
     crypto-js "^4.1.1"
