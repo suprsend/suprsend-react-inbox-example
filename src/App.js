@@ -30,9 +30,7 @@ function App() {
   }
 
   useEffect(() => {
-    if (userID) {
-      fetchSubscriber(userID, setUserData);
-    }
+    fetchSubscriber(userID, setUserData);
   }, [userID]);
 
   return (
