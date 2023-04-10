@@ -33,7 +33,7 @@ function App() {
     if (userID) {
       fetchSubscriber(userID, setUserData);
     }
-  }, []);
+  }, [userID]);
 
   return (
     <SuprSendProvider
