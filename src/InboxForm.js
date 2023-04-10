@@ -7,8 +7,9 @@ import Tooltip from "./Tooltip";
 import "react-toastify/dist/ReactToastify.css";
 
 const mandatoryFieldMessage = "This field is required";
+const httpValidation = "URL must starts with http/https";
 
-function formValidation({ text, avatar, subtext, actions }) {
+function formValidation({ text, avatar, subtext, actions, url }) {
   let errors = {
     text: "",
     avatar: {
@@ -19,6 +20,7 @@ function formValidation({ text, avatar, subtext, actions }) {
       text: "",
       action_url: "",
     },
+    url: "",
     actions: [
       {
         name: "",
@@ -39,8 +41,35 @@ function formValidation({ text, avatar, subtext, actions }) {
     errors.avatar.avatar_url = mandatoryFieldMessage;
   }
 
+  if (
+    avatar?.avatar_url &&
+    !avatar?.avatar_url?.startsWith("http://") &&
+    !avatar?.avatar_url?.startsWith("https://")
+  ) {
+    errors.avatar.avatar_url = httpValidation;
+  }
+  if (
+    avatar?.action_url &&
+    !avatar?.action_url?.startsWith("http://") &&
+    !avatar?.action_url?.startsWith("https://")
+  ) {
+    errors.avatar.action_url = httpValidation;
+  }
+
   if (subtext?.action_url && !subtext?.text) {
     errors.subtext.text = mandatoryFieldMessage;
+  }
+
+  if (
+    subtext?.action_url &&
+    !subtext?.action_url?.startsWith("http://") &&
+    !subtext?.action_url?.startsWith("https://")
+  ) {
+    errors.subtext.action_url = httpValidation;
+  }
+
+  if (url && !url?.startsWith("http://") && !url?.startsWith("https://")) {
+    errors.url = httpValidation;
   }
 
   if (actions?.[0]?.name && !actions?.[0]?.url) {
@@ -59,6 +88,22 @@ function formValidation({ text, avatar, subtext, actions }) {
     errors.actions[1].name = mandatoryFieldMessage;
   }
 
+  if (
+    actions?.[1]?.url &&
+    !actions?.[1]?.url?.startsWith("http://") &&
+    !actions?.[1]?.url?.startsWith("https://")
+  ) {
+    errors.actions[1].url = httpValidation;
+  }
+
+  if (
+    actions?.[0]?.url &&
+    !actions?.[0]?.url?.startsWith("http://") &&
+    !actions?.[0]?.url?.startsWith("https://")
+  ) {
+    errors.actions[0].url = httpValidation;
+  }
+
   return errors;
 }
 
@@ -75,7 +120,7 @@ function handleSendNotification({
   setSubtext,
   setActions,
 }) {
-  const errors = formValidation({ text, avatar, subtext, actions });
+  const errors = formValidation({ text, avatar, subtext, actions, url });
 
   if (
     errors?.text ||
@@ -100,7 +145,7 @@ function handleSendNotification({
   };
   suprsend.track("INBOX DEMO - SEND NOTIFICATION", formDetails);
 
-  toast("Notification will be triggered in a moment!", {
+  toast("Notification will be triggered in a while", {
     type: "success",
     position: "bottom-right",
     hideProgressBar: true,
@@ -153,6 +198,18 @@ function InboxForm({ showToast, setShowToast }) {
   const [formErrors, setFormErrors] = useState({});
 
   let clonedFormErrors = { ...formErrors };
+
+  const isDisable =
+    text ||
+    avatar?.avatar_url ||
+    avatar?.action_url ||
+    subtext?.text ||
+    subtext?.action_url ||
+    url ||
+    actions?.[0]?.name ||
+    actions?.[0]?.url ||
+    actions?.[1]?.name ||
+    actions?.[1]?.url;
 
   return (
     <div className="col-span-1">
@@ -224,16 +281,30 @@ function InboxForm({ showToast, setShowToast }) {
               </p>
             )}
           </div>
-
-          <input
-            id="avatar_action_url"
-            className="w-full rounded-md sm:text-sm border border-gray-300 placeholder-gray-300 h-10 ml-1.5 px-3"
-            placeholder="Click Action URL"
-            value={avatar?.action_url}
-            onChange={(e) => {
-              setAvatar({ ...avatar, action_url: e.target.value });
-            }}
-          />
+          <div className="w-full">
+            <input
+              id="avatar_action_url"
+              className="w-full rounded-md sm:text-sm border border-gray-300 placeholder-gray-300 h-10 ml-1.5 px-3"
+              placeholder="Click Action URL"
+              value={avatar?.action_url}
+              onChange={(e) => {
+                setAvatar({ ...avatar, action_url: e.target.value });
+                if (formErrors?.avatar?.action_url) {
+                  clonedFormErrors.avatar.action_url = "";
+                  setFormErrors(clonedFormErrors);
+                }
+                if (!e.target.value && formErrors?.avatar?.avatar_url) {
+                  clonedFormErrors.avatar.avatar_url = "";
+                  setFormErrors(clonedFormErrors);
+                }
+              }}
+            />
+            {formErrors?.avatar?.action_url && (
+              <p className="text-sm text-red-500 ml-1">
+                {formErrors?.avatar?.action_url}
+              </p>
+            )}
+          </div>
         </div>
       </div>
       <div className="mb-6">
@@ -267,15 +338,30 @@ function InboxForm({ showToast, setShowToast }) {
               </p>
             )}
           </div>
-          <input
-            id="subtext_action_url"
-            className="w-full rounded-md sm:text-sm border border-gray-300 placeholder-gray-300 h-10 ml-1.5 px-3"
-            placeholder="Click Action URL"
-            value={subtext?.action_url}
-            onChange={(e) => {
-              setSubtext({ ...subtext, action_url: e.target.value });
-            }}
-          />
+          <div className="w-full">
+            <input
+              id="subtext_action_url"
+              className="w-full rounded-md sm:text-sm border border-gray-300 placeholder-gray-300 h-10 ml-1.5 px-3"
+              placeholder="Click Action URL"
+              value={subtext?.action_url}
+              onChange={(e) => {
+                setSubtext({ ...subtext, action_url: e.target.value });
+                if (formErrors?.subtext?.action_url) {
+                  clonedFormErrors.subtext.action_url = "";
+                  setFormErrors(clonedFormErrors);
+                }
+                if (!e.target.value && formErrors?.subtext?.text) {
+                  clonedFormErrors.subtext.text = "";
+                  setFormErrors(clonedFormErrors);
+                }
+              }}
+            />
+            {formErrors?.subtext?.action_url && (
+              <p className="text-sm text-red-500 ml-1">
+                {formErrors?.subtext?.action_url}
+              </p>
+            )}
+          </div>
         </div>
       </div>
       <div className="mb-6">
@@ -292,8 +378,15 @@ function InboxForm({ showToast, setShowToast }) {
           value={url}
           onChange={(e) => {
             setUrl(e.target.value);
+            if (formErrors?.url) {
+              clonedFormErrors.url = "";
+              setFormErrors(clonedFormErrors);
+            }
           }}
         />
+        {formErrors?.url && (
+          <p className="text-sm text-red-500">{formErrors?.url}</p>
+        )}
       </div>
       <div className="mb-6">
         <label
@@ -393,7 +486,8 @@ function InboxForm({ showToast, setShowToast }) {
       </div>
       <div className="flex justify-center ml-48">
         <button
-          className="bg-[#386EBC] rounded py-2 px-3 text-sm text-white"
+          className="bg-[#066AF3] rounded py-2 px-3 text-sm text-white disabled:opacity-50"
+          disabled={!isDisable}
           onClick={() => {
             handleSendNotification({
               text,
