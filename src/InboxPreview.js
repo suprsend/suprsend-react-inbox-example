@@ -17,6 +17,18 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+function makeAbsoluteUrl(url) {
+  let modifiedUrl = null;
+  if (url) {
+    if (!url?.startsWith("http") && !url?.startsWith("https")) {
+      modifiedUrl = `http://${url}`;
+    } else {
+      modifiedUrl = url;
+    }
+  }
+  return modifiedUrl;
+}
+
 function useComponentVisible(initialIsVisible) {
   const [showNotifications, setShowNotifications] = useState(initialIsVisible);
   const ref = useRef(null);
@@ -118,7 +130,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
 
   return (
     <a
-      href={notificationdetails?.url ? `//${notificationdetails?.url}` : null}
+      href={makeAbsoluteUrl(notificationdetails?.url)}
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => {
@@ -139,11 +151,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
           <div className="inline-flex items-start mr-2 w-[10%]">
             {notificationdetails?.avatar?.avatar_url ? (
               <a
-                href={
-                  notificationdetails?.avatar?.action_url
-                    ? `//${notificationdetails?.avatar?.action_url}`
-                    : null
-                }
+                href={makeAbsoluteUrl(notificationdetails?.avatar?.action_url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => {
@@ -181,11 +189,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
             )}
             {notificationdetails?.subtext?.text && (
               <a
-                href={
-                  notificationdetails?.subtext?.action_url
-                    ? `//${notificationdetails?.subtext?.action_url}`
-                    : null
-                }
+                href={makeAbsoluteUrl(notificationdetails?.subtext?.action_url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => {
@@ -221,7 +225,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
                 style={{ maxWidth: "50%" }}
               >
                 <a
-                  href={actionOne?.url ? `//${actionOne?.url}` : null}
+                  href={makeAbsoluteUrl(actionOne?.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => {
@@ -241,7 +245,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
                 style={{ maxWidth: "50%" }}
               >
                 <a
-                  href={actionTwo?.url ? `//${actionTwo?.url}` : null}
+                  href={makeAbsoluteUrl(actionTwo?.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => {
