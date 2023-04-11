@@ -18,6 +18,8 @@ async function fetchSubscriber(userID, setUserData) {
     const response = await fetch(`${window.location.href}subscriber/${userID}`);
     const userDetails = await response.json();
     setUserData(userDetails);
+  } else {
+    setUserData({});
   }
 }
 
