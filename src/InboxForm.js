@@ -124,15 +124,17 @@ function handleSendNotification({
 
   if (
     errors?.text ||
-    errors?.avatar.avatar_url ||
-    errors?.subtext.text ||
+    errors?.avatar?.avatar_url ||
+    errors?.avatar?.action_url ||
+    errors?.subtext?.text ||
+    errors?.subtext?.action_url ||
+    errors?.url ||
     errors?.actions?.[0]?.name ||
     errors?.actions?.[0]?.url ||
     errors?.actions?.[1]?.url ||
     errors?.actions?.[1]?.name
   ) {
     setFormErrors(errors);
-
     return;
   }
 
