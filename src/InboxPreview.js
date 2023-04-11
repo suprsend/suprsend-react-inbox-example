@@ -118,7 +118,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
 
   return (
     <a
-      href={notificationdetails?.url}
+      href={notificationdetails?.url ? `//${notificationdetails?.url}` : null}
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => {
@@ -139,7 +139,11 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
           <div className="inline-flex items-start mr-2 w-[10%]">
             {notificationdetails?.avatar?.avatar_url ? (
               <a
-                href={notificationdetails?.avatar?.action_url}
+                href={
+                  notificationdetails?.avatar?.action_url
+                    ? `//${notificationdetails?.avatar?.action_url}`
+                    : null
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => {
@@ -177,7 +181,11 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
             )}
             {notificationdetails?.subtext?.text && (
               <a
-                href={notificationdetails?.subtext?.action_url}
+                href={
+                  notificationdetails?.subtext?.action_url
+                    ? `//${notificationdetails?.subtext?.action_url}`
+                    : null
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => {
@@ -213,7 +221,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
                 style={{ maxWidth: "50%" }}
               >
                 <a
-                  href={actionOne?.url}
+                  href={actionOne?.url ? `//${actionOne?.url}` : null}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => {
@@ -233,7 +241,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
                 style={{ maxWidth: "50%" }}
               >
                 <a
-                  href={actionTwo?.url}
+                  href={actionTwo?.url ? `//${actionTwo?.url}` : null}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => {
