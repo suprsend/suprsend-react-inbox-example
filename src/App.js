@@ -7,30 +7,35 @@ import InboxForm from "./InboxForm";
 import InboxPreview from "./InboxPreview";
 import "./App.css";
 
-function createUser() {
-  const userID = uuid();
-  localStorage.setItem("SuprsendUser", userID);
-  suprsend.identify(userID);
-}
-
-async function fetchSubscriber(userID, setUserData) {
-  const response = await fetch(`${window.location.href}subscriber/${userID}`);
+async function fetchSubscriber(distinctID) {
+  const response = await fetch(
+    `${window.location.href}subscriber/${distinctID}`
+  );
   const userDetails = await response.json();
-  setUserData(userDetails);
+  return userDetails?.subscriber_id;
 }
 
 function App() {
-  const [userData, setUserData] = useState();
   const [showToast, setShowToast] = useState(false);
+  const [userData, setUserData] = useState({
+    distinct_id: "",
+    subscriber_id: "",
+  });
 
-  const userID = localStorage.getItem("SuprsendUser");
+  async function handleUserCreation() {
+    let userID = localStorage.getItem("InboxExampleUserID");
+    if (!userID) {
+      userID = uuid();
+      localStorage.setItem("InboxExampleUserID", userID);
+      suprsend.identify(userID);
+    }
 
-  if (!userID) {
-    createUser();
+    const subscriberId = await fetchSubscriber(userID);
+    setUserData({ distinct_id: userID, subscriber_id: subscriberId });
   }
 
   useEffect(() => {
-    fetchSubscriber(userID, setUserData);
+    handleUserCreation();
   }, []);
 
   return (

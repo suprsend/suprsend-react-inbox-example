@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const mandatoryFieldMessage = "This field is required";
 
-function formValidation({ text, avatar, subtext, actions }) {
+function formValidation({ text, avatar, subtext, actions, url }) {
   let errors = {
     text: "",
     avatar: {
@@ -19,6 +19,7 @@ function formValidation({ text, avatar, subtext, actions }) {
       text: "",
       action_url: "",
     },
+    url: "",
     actions: [
       {
         name: "",
@@ -75,19 +76,18 @@ function handleSendNotification({
   setSubtext,
   setActions,
 }) {
-  const errors = formValidation({ text, avatar, subtext, actions });
+  const errors = formValidation({ text, avatar, subtext, actions, url });
 
   if (
     errors?.text ||
-    errors?.avatar.avatar_url ||
-    errors?.subtext.text ||
+    errors?.avatar?.avatar_url ||
+    errors?.subtext?.text ||
     errors?.actions?.[0]?.name ||
     errors?.actions?.[0]?.url ||
     errors?.actions?.[1]?.url ||
     errors?.actions?.[1]?.name
   ) {
     setFormErrors(errors);
-
     return;
   }
 
@@ -100,7 +100,7 @@ function handleSendNotification({
   };
   suprsend.track("INBOX DEMO - SEND NOTIFICATION", formDetails);
 
-  toast("Notification will be triggered in a moment!", {
+  toast("Notification will be triggered in a while", {
     type: "success",
     position: "bottom-right",
     hideProgressBar: true,
@@ -153,6 +153,18 @@ function InboxForm({ showToast, setShowToast }) {
   const [formErrors, setFormErrors] = useState({});
 
   let clonedFormErrors = { ...formErrors };
+
+  const enableButton =
+    text ||
+    avatar?.avatar_url ||
+    avatar?.action_url ||
+    subtext?.text ||
+    subtext?.action_url ||
+    url ||
+    actions?.[0]?.name ||
+    actions?.[0]?.url ||
+    actions?.[1]?.name ||
+    actions?.[1]?.url;
 
   return (
     <div className="col-span-1">
@@ -224,16 +236,21 @@ function InboxForm({ showToast, setShowToast }) {
               </p>
             )}
           </div>
-
-          <input
-            id="avatar_action_url"
-            className="w-full rounded-md sm:text-sm border border-gray-300 placeholder-gray-300 h-10 ml-1.5 px-3"
-            placeholder="Click Action URL"
-            value={avatar?.action_url}
-            onChange={(e) => {
-              setAvatar({ ...avatar, action_url: e.target.value });
-            }}
-          />
+          <div className="w-full">
+            <input
+              id="avatar_action_url"
+              className="w-full rounded-md sm:text-sm border border-gray-300 placeholder-gray-300 h-10 ml-1.5 px-3"
+              placeholder="Click Action URL"
+              value={avatar?.action_url}
+              onChange={(e) => {
+                setAvatar({ ...avatar, action_url: e.target.value });
+                if (!e.target.value && formErrors?.avatar?.avatar_url) {
+                  clonedFormErrors.avatar.avatar_url = "";
+                  setFormErrors(clonedFormErrors);
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
       <div className="mb-6">
@@ -267,15 +284,21 @@ function InboxForm({ showToast, setShowToast }) {
               </p>
             )}
           </div>
-          <input
-            id="subtext_action_url"
-            className="w-full rounded-md sm:text-sm border border-gray-300 placeholder-gray-300 h-10 ml-1.5 px-3"
-            placeholder="Click Action URL"
-            value={subtext?.action_url}
-            onChange={(e) => {
-              setSubtext({ ...subtext, action_url: e.target.value });
-            }}
-          />
+          <div className="w-full">
+            <input
+              id="subtext_action_url"
+              className="w-full rounded-md sm:text-sm border border-gray-300 placeholder-gray-300 h-10 ml-1.5 px-3"
+              placeholder="Click Action URL"
+              value={subtext?.action_url}
+              onChange={(e) => {
+                setSubtext({ ...subtext, action_url: e.target.value });
+                if (!e.target.value && formErrors?.subtext?.text) {
+                  clonedFormErrors.subtext.text = "";
+                  setFormErrors(clonedFormErrors);
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
       <div className="mb-6">
@@ -393,7 +416,8 @@ function InboxForm({ showToast, setShowToast }) {
       </div>
       <div className="flex justify-center ml-48">
         <button
-          className="bg-[#386EBC] rounded py-2 px-3 text-sm text-white"
+          className="bg-[#066AF3] rounded py-2 px-3 text-sm text-white disabled:opacity-50"
+          disabled={!enableButton}
           onClick={() => {
             handleSendNotification({
               text,

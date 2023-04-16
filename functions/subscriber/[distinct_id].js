@@ -24,7 +24,5 @@ export async function onRequestGet(context) {
     distinctId,
     context.env.INBOX_SECRET
   );
-  return new Response(
-    JSON.stringify({ distinct_id: distinctId, subscriber_id: subscriberId })
-  );
+  return new Response(JSON.stringify({ subscriber_id: subscriberId }));
 }

@@ -11,9 +11,22 @@ import SuprSendLogo from "./assets/suprsendLogo.png";
 import { ReactComponent as BellIcon } from "./assets/bellIcon.svg";
 import { ReactComponent as GithubIcon } from "./assets/github.svg";
 import { ReactComponent as DocumentIcon } from "./assets/document.svg";
+import { ReactComponent as EmptyNotificationsIcon } from "./assets/emptyNotificationsIcon.svg";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
+}
+
+function makeAbsoluteUrl(url) {
+  let modifiedUrl = null;
+  if (url) {
+    if (!url?.startsWith("http") && !url?.startsWith("https")) {
+      modifiedUrl = `http://${url}`;
+    } else {
+      modifiedUrl = url;
+    }
+  }
+  return modifiedUrl;
 }
 
 function useComponentVisible(initialIsVisible) {
@@ -80,7 +93,7 @@ dayjs.updateLocale("en", {
 
 function ToastNotification({ data }) {
   return (
-    <div className="bg-white flex items-start max-h-14">
+    <div className="bg-white flex items-start max-h-10">
       {data?.message?.avatar?.avatar_url ? (
         <img
           src={data?.message?.avatar?.avatar_url}
@@ -117,7 +130,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
 
   return (
     <a
-      href={notificationdetails?.url}
+      href={makeAbsoluteUrl(notificationdetails?.url)}
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => {
@@ -138,7 +151,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
           <div className="inline-flex items-start mr-2 w-[10%]">
             {notificationdetails?.avatar?.avatar_url ? (
               <a
-                href={notificationdetails?.avatar?.action_url}
+                href={makeAbsoluteUrl(notificationdetails?.avatar?.action_url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => {
@@ -176,7 +189,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
             )}
             {notificationdetails?.subtext?.text && (
               <a
-                href={notificationdetails?.subtext?.action_url}
+                href={makeAbsoluteUrl(notificationdetails?.subtext?.action_url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => {
@@ -212,7 +225,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
                 style={{ maxWidth: "50%" }}
               >
                 <a
-                  href={actionOne?.url}
+                  href={makeAbsoluteUrl(actionOne?.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => {
@@ -232,7 +245,7 @@ function NotificationItem({ notifications, notification, index, markClicked }) {
                 style={{ maxWidth: "50%" }}
               >
                 <a
-                  href={actionTwo?.url}
+                  href={makeAbsoluteUrl(actionTwo?.url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => {
@@ -281,10 +294,17 @@ function NotificationPreview({ notifications, markClicked }) {
       <div className="rounded-xl border border-gray-300 -mt-[0.8px]">
         <div className="max-h-[550px]">
           {!hasNotifications ? (
-            <div className="h-[300px] flex justify-center items-center">
-              <p className="text-sm text-gray-500">
-                No notification triggered yet
-              </p>
+            <div className="h-[400px] flex justify-center items-center">
+              <div>
+                <EmptyNotificationsIcon />
+                <p className="text-md font-medium mt-8 text-center">
+                  No notification yet
+                </p>
+                <div className="text-sm mt-4 text-gray-500 text-center">
+                  <p>We’ll let you know when we've got</p>
+                  <p>something new for you.</p>
+                </div>
+              </div>
             </div>
           ) : (
             <NotificationList
