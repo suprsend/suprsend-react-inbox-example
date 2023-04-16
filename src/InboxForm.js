@@ -169,7 +169,7 @@ function InboxForm({ showToast, setShowToast }) {
   return (
     <div className="col-span-1">
       <h1 className="text-xl text-black font-bold">
-        Inbox Notification example
+        Inbox Notification Example
       </h1>
       <p className="mt-2 text-sm font-normal text-[#4B5563]">
         This is where you can add the content of the notification
