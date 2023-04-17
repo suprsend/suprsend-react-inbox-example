@@ -6,10 +6,7 @@ import App from "./App";
 
 suprsend.init(
   process.env.REACT_APP_WORKSPACE_KEY,
-  process.env.REACT_APP_WORKSPACE_SECRET,
-  {
-    api_url: process.env.REACT_APP_COLLECTOR_URL,
-  }
+  process.env.REACT_APP_WORKSPACE_SECRET
 );
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
