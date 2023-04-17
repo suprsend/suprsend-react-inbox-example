@@ -392,7 +392,7 @@ function InboxPreview({ showToast }) {
           </p>
         </div>
         <a
-          href="https://github.com/suprsend/react-inbox-example"
+          href="https://github.com/suprsend/suprsend-react-inbox-example"
           target="_blank"
           rel="noopener noreferrer"
           className="ml-auto mt-9 text-sm text-gray-500 mr-6 flex items-center"
