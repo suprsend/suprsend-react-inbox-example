@@ -27,8 +27,8 @@ function App() {
     if (!userID) {
       userID = uuid();
       localStorage.setItem("InboxExampleUserID", userID);
-      suprsend.identify(userID);
     }
+    suprsend.identify(userID);
 
     const subscriberId = await fetchSubscriber(userID);
     setUserData({ distinct_id: userID, subscriber_id: subscriberId });
